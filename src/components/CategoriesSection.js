@@ -4,7 +4,6 @@ import fruitImage from '../assets/pexels-pixabay-51312.jpg';
 import vegetableImage from '../assets/images.jpg';
 import juiceImage from '../assets/a-front-view-fresh-fruit-cocktails-with-fresh-fruit-slices-ice-cooling-on-blue-drink-juice-co-free-photo.jpg';
 
-
 const CategoriesContainer = styled.div`
   background: linear-gradient(45deg, #001f07, #004d1a);
   padding: 80px 30px;
@@ -182,7 +181,6 @@ const NavButton = styled.button`
   }
 `;
 
-
 const categoriesData = [
   {
     image: fruitImage,
@@ -205,7 +203,6 @@ const CategoriesSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
-  
   useEffect(() => {
     const interval = setInterval(() => {
       setIsVisible(false);
