@@ -9,6 +9,7 @@ const CategoriesContainer = styled.div`
   padding: 80px 30px;
   position: relative;
   overflow: hidden;
+  min-height: 100vh; /* Ensure it covers full height of the page */
 
   @media (max-width: 768px) {
     padding: 60px 20px;
@@ -70,15 +71,16 @@ const CategoriesGrid = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  height: auto; /* Let height adjust based on content */
   position: relative;
+  flex-direction: column; /* Stack elements in a column */
 
   @media (max-width: 768px) {
-    height: 300px;
+    height: auto; /* Adjust height for smaller screens */
   }
 
   @media (max-width: 480px) {
-    height: 250px;
+    height: auto; /* Ensure flexibility for very small screens */
   }
 `;
 
@@ -92,6 +94,7 @@ const CategoryCard = styled.div`
   animation: ${({ isVisible }) => (isVisible ? smoothSlideIn : smoothSlideOut)} 0.8s ease-in-out;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; /* Add margin to avoid overlap on small screens */
 
   &:hover {
     transform: translateY(-10px);
