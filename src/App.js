@@ -13,7 +13,7 @@ import Explore from './components/Explore';
 import FreshFood from './components/FreshFood';
 import PremiumQuality from './components/PremiumQuality';
 import OrganicFarming from './components/OrganicFarming';
-import BuyNowPage from './components/BuyNowPage'; // Import the Buy Now page
+import BuyNowPage from './components/BuyNowPage'; 
 import './App.css';
 
 function App() {
@@ -33,7 +33,6 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/contact-us" element={<ContactUs />} />
-          {/* Fix the route for Buy Now Page */}
           <Route path="/buy-now" element={<BuyNowPage />} />
         </Routes>
         <Footer />

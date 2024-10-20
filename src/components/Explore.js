@@ -156,23 +156,23 @@ const Explore = () => {
       <ProductGrid>
         <ProductCard>
           <img src={ProductImage1} alt="Product 1" />
-          <h3>Product 1</h3>
+          <h3>Fresh Oranges</h3>
           <p>Delicious fresh produce straight from our farms.</p>
-          <button>Buy Now</button>
+          
         </ProductCard>
 
         <ProductCard>
           <img src={ProductImage2} alt="Product 2" />
-          <h3>Product 2</h3>
+          <h3>Red Apple</h3>
           <p>High-quality organic fruits and vegetables.</p>
-          <button>Buy Now</button>
+          
         </ProductCard>
 
         <ProductCard>
           <img src={ProductImage3} alt="Product 3" />
-          <h3>Product 3</h3>
+          <h3>Juicy Watermelon</h3>
           <p>Get fresh produce delivered to your doorsteps.</p>
-          <button>Buy Now</button>
+          
         </ProductCard>
       </ProductGrid>
 

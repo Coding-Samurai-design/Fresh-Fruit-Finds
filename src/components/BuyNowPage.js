@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import emailjs from 'emailjs-com';
-import { QRCodeCanvas } from 'qrcode.react'; // Correct import
+import { QRCodeCanvas } from 'qrcode.react'; 
 import styled from 'styled-components';
 
 const BuyNowPageContainer = styled.div`
   padding: 80px 20px;
-  background-color: #f8f8f8;
-  color: #333;
+  background-color: #07250c; /* Updated to match Product Section */
+  color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,7 +24,7 @@ const BuyNowPageContainer = styled.div`
 `;
 
 const ProductSummary = styled.div`
-  background-color: #fff;
+  background-color: #001f07; /* Consistent with Product Section card color */
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -71,6 +71,7 @@ const BuyButton = styled.button`
   border-radius: 5px;
   font-size: 1.2rem;
   cursor: pointer;
+  margin-top: 20px;
   transition: background-color 0.3s ease;
 
   &:hover {
@@ -112,9 +113,14 @@ const Form = styled.form`
 const PaymentOptionsContainer = styled.div`
   margin-top: 20px;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 20px;
   width: 100%;
   max-width: 400px;
+
+  @media (max-width: 480px) {
+    flex-direction: column; /* Stack buttons on smaller screens */
+  }
 `;
 
 const BuyNowPage = () => {
@@ -138,32 +144,52 @@ const BuyNowPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Send confirmation email using emailjs
-    emailjs.send(
-      'service_uxox1dk', // Replace with your EmailJS service ID
-      'template_ohb7uve', // Replace with your EmailJS template ID
-      {
-        product_name: product.title,
-        name: formData.name,
-        email: formData.email,
-        address: formData.address,
-        phone: formData.phone,
-        message: formData.message,
-      },
-      'aDNtWgyBA_304wJQ_' // Replace with your EmailJS user ID
-    ).then((response) => {
-      console.log('SUCCESS!', response.status, response.text);
-      alert('Purchase confirmed! Check your email for details.');
+    
+    emailjs
+      .send(
+        'service_uxox1dk', 
+        'template_ohb7uve', 
+        {
+          product_name: product.title,
+          name: formData.name,
+          email: formData.email,
+          address: formData.address,
+          phone: formData.phone,
+          message: formData.message,
+          payment_status:
+            paymentMethod === 'upi'
+              ? 'Paid via UPI'
+              : 'Pending - Cash on Delivery',
+        },
+        'aDNtWgyBA_304wJQ_' 
+      )
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        alert('Purchase confirmed! Check your email for details.');
 
-      if (paymentMethod === 'upi') {
-        // Redirect to PhonePe for UPI payment
-        const upiLink = `upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=500&cu=INR&tn=Payment%20for%20${product.title}`;
-        window.location.href = upiLink;
-      }
-    }).catch((error) => {
-      console.log('FAILED...', error);
-      alert('Failed to send email. Please try again.');
-    });
+        if (paymentMethod === 'upi') {
+          
+          const upiLink = `upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${product.price}&cu=INR&tn=Payment%20for%20${product.title}`;
+          window.location.href = upiLink;
+
+         
+          emailjs.send(
+            'service_uxox1dk', 
+            'template_ohb7uve', 
+            {
+              product_name: product.title,
+              name: formData.name,
+              email: formData.email,
+              payment_status: 'Paid via UPI',
+            },
+            'aDNtWgyBA_304wJQ_' 
+          );
+        }
+      })
+      .catch((error) => {
+        console.log('FAILED...', error);
+        alert('Failed to send email. Please try again.');
+      });
   };
 
   const handlePaymentOption = (option) => {
@@ -222,7 +248,10 @@ const BuyNowPage = () => {
             onChange={handleChange}
           />
           <PaymentOptionsContainer>
-            <BuyButton type="button" onClick={() => handlePaymentOption('cash')}>
+            <BuyButton
+              type="button"
+              onClick={() => handlePaymentOption('cash')}
+            >
               Cash on Delivery
             </BuyButton>
             <BuyButton type="button" onClick={() => handlePaymentOption('upi')}>
@@ -235,9 +264,9 @@ const BuyNowPage = () => {
         {paymentMethod === 'upi' && (
           <div>
             <h3>Scan to Pay via UPI</h3>
-            <QRCodeCanvas 
-              value={`upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${product.price}&cu=INR&tn=Payment%20for%20${product.title}`} 
-              size={256} 
+            <QRCodeCanvas
+              value={`upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${product.price}&cu=INR&tn=Payment%20for%20${product.title}`}
+              size={256}
             />
           </div>
         )}

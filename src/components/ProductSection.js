@@ -7,7 +7,12 @@ import productImage3 from '../assets/Green-Bell-Pepper-hero@2x.png';
 import productImage4 from '../assets/orange-1117645_1280.jpg';
 import productImage5 from '../assets/red-apple-fruit-half-green-leaf-isolated-white-ripe-background-apples-clipping-path-98166062.webp';
 import productImage6 from '../assets/fresh-juicy-sliced-watermelon-fruit-with-water-splash-isolated-on-background-healthy-fruit-ai-generative-photo.jpg';
-
+import productImage7 from '../assets/carrot-head.png'
+import productImage8 from '../assets/ripe-bananas.jpg'
+import productImage9 from '../assets/sweet_corn_pic_7C4E17FD8CCFA.jpg'
+import productImage10 from '../assets/pexels-julia-nagy-568948-1327838.jpg'
+import productImage11 from '../assets/cucumber-seeds-malaysia-t103m_900x.webp'
+import productImage12 from '../assets/104607360.webp'
 const ProductSectionContainer = styled.div`
   padding: 80px 20px;
   background-color: #07250c;
@@ -131,13 +136,49 @@ const products = [
     price: 'Rs 200.00',
     image: productImage6,
   },
+  {
+    id: 7,
+    title: 'Carrot',
+    price: 'Rs 20.00',
+    image: productImage7,
+  },
+  {
+    id: 8,
+    title: 'Ripe Bananas',
+    price: 'Rs 80.00',
+    image: productImage8,
+  },
+  {
+    id: 9,
+    title: 'Sweet Corn',
+    price: 'Rs 40.00',
+    image: productImage9,
+  },
+  {
+    id: 10,
+    title: 'Tomatoes',
+    price: 'Rs 20.00',
+    image: productImage10,
+  },
+  {
+    id: 11,
+    title: 'cucumber',
+    price: 'Rs 80.00',
+    image: productImage11,
+  },
+  {
+    id: 12,
+    title: 'Grapes',
+    price: 'Rs 2220.00',
+    image: productImage12,
+  },
 ];
 
 const ProductSection = () => {
   const navigate = useNavigate();
 
   const handleBuyNow = (product) => {
-    console.log(product); // Debugging product data
+    console.log(product); 
     navigate('/buy-now', { state: { product } });
   };
 
