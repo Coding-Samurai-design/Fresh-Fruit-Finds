@@ -74,12 +74,13 @@ const ProductGrid = styled.div`
   }
 `;
 
+
 const ProductCard = styled.div`
-  background-color: #fff;
+  background-color: #001f07; 
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  color: #07250c;
+  color: #fff; 
   text-align: center;
   transition: transform 0.3s ease;
 
@@ -118,6 +119,7 @@ const ProductCard = styled.div`
     }
   }
 `;
+
 
 const CallToAction = styled.div`
   margin-top: 60px;
