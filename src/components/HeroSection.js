@@ -1,8 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import heroBackground from '../assets/one_seed_fruits.png';
-import logo from '../assets/FRESH_FIELD_FINDS-removebg-preview.png';
+import heroBackground from '../assets/453933.jpg';
 
 const fadeIn = keyframes`
   from {
@@ -20,7 +19,7 @@ const HeroContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;  /* Adjust for full height */
+  min-height: 100vh;
   background: url(${heroBackground}) center/cover no-repeat;
   padding: 0 50px;
   animation: ${fadeIn} 1.5s ease-in-out;
@@ -34,27 +33,11 @@ const HeroContainer = styled.div`
   }
 `;
 
-const Logo = styled.img`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 150px;
-
-  @media (max-width: 768px) {
-    width: 120px;
-    top: 10px;
-    left: 10px;
-  }
-
-  @media (max-width: 480px) {
-    width: 100px;
-  }
-`;
-
 const HeroContent = styled.div`
-  color: #D0F0C0;
+  color: #ffffff;
   text-align: center;
   max-width: 700px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
 
   h1 {
     font-size: 3.5rem;
@@ -118,7 +101,6 @@ const HeroSection = () => {
 
   return (
     <HeroContainer>
-      <Logo src={logo} alt="Logo" />
       <HeroContent>
         <h1>We Provide Fresh Produce</h1>
         <p>Eat Your Greens for a Healthy Sheen.</p>
