@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom'; // Fixed typo
 import styled from 'styled-components';
+import { useCart } from '../context/CartContext'; // Import useCart from CartContext
 
 const Nav = styled.nav`
   display: flex;
@@ -27,7 +28,7 @@ const NavLinks = styled.div`
   }
 `;
 
-const NavLink = styled(Link)`
+const NavLinkStyled = styled(NavLink)` // Changed NavLink naming for better readability
   margin: 0 15px;
   text-decoration: none;
   color: white;
@@ -65,6 +66,7 @@ const Hamburger = styled.div`
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { cartItems } = useCart(); // Access cart items from context
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -78,11 +80,14 @@ const Navbar = () => {
         <span></span>
       </Hamburger>
       <NavLinks isOpen={isOpen}>
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/explore">Explore</NavLink>
-        <NavLink to="/categories">Categories</NavLink>
-        <NavLink to="/organic">Organic</NavLink>
-        <NavLink to="/products">Products</NavLink>
+        <NavLinkStyled to="/">Home</NavLinkStyled>
+        <NavLinkStyled to="/explore">Explore</NavLinkStyled>
+        <NavLinkStyled to="/categories">Categories</NavLinkStyled>
+        <NavLinkStyled to="/organic">Organic</NavLinkStyled>
+        <NavLinkStyled to="/products">Products</NavLinkStyled>
+        <NavLinkStyled to="/cart">
+          <span>🛒 {cartItems.length}</span> {/* Cart icon with item count */}
+        </NavLinkStyled>
       </NavLinks>
     </Nav>
   );

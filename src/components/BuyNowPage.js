@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import emailjs from 'emailjs-com';
-import { QRCodeCanvas } from 'qrcode.react'; 
+import { QRCodeCanvas } from 'qrcode.react';
 import styled from 'styled-components';
 
 const BuyNowPageContainer = styled.div`
   padding: 80px 20px;
-  background-color: #07250c; /* Updated to match Product Section */
+  background-color: #07250c;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -24,7 +24,7 @@ const BuyNowPageContainer = styled.div`
 `;
 
 const ProductSummary = styled.div`
-  background-color: #001f07; /* Consistent with Product Section card color */
+  background-color: #001f07;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -95,7 +95,8 @@ const Form = styled.form`
   flex-direction: column;
   align-items: center;
 
-  input, textarea {
+  input,
+  textarea {
     width: 100%;
     max-width: 400px;
     padding: 10px;
@@ -119,13 +120,18 @@ const PaymentOptionsContainer = styled.div`
   max-width: 400px;
 
   @media (max-width: 480px) {
-    flex-direction: column; /* Stack buttons on smaller screens */
+    flex-direction: column;
   }
 `;
 
 const BuyNowPage = () => {
   const location = useLocation();
-  const { product } = location.state || { product: null };
+  const navigate = useNavigate();
+  const { products = [] } = location.state || {};
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); 
+  }, []);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -136,6 +142,22 @@ const BuyNowPage = () => {
   });
 
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [productNames, setProductNames] = useState('');
+
+  useEffect(() => {
+    const calculatedTotal = products.reduce((acc, product) => {
+      let price = product.price.replace(/[^0-9.]/g, '');
+      price = parseFloat(price);
+      if (isNaN(price)) price = 0;
+      return acc + price;
+    }, 0);
+
+    setTotalPrice(calculatedTotal);
+
+    const names = products.map((product) => product.title).join(', ');
+    setProductNames(names);
+  }, [products]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -144,13 +166,12 @@ const BuyNowPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    
     emailjs
       .send(
-        'service_uxox1dk', 
-        'template_ohb7uve', 
+        'service_uxox1dk',
+        'template_ohb7uve',
         {
-          product_name: product.title,
+          product_name: productNames,
           name: formData.name,
           email: formData.email,
           address: formData.address,
@@ -160,31 +181,19 @@ const BuyNowPage = () => {
             paymentMethod === 'upi'
               ? 'Paid via UPI'
               : 'Pending - Cash on Delivery',
+          total_price: totalPrice,
         },
-        'aDNtWgyBA_304wJQ_' 
+        'aDNtWgyBA_304wJQ_'
       )
       .then((response) => {
-        console.log('SUCCESS!', response.status, response.text);
         alert('Purchase confirmed! Check your email for details.');
 
         if (paymentMethod === 'upi') {
-          
-          const upiLink = `upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${product.price}&cu=INR&tn=Payment%20for%20${product.title}`;
+          const upiLink = `upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${totalPrice}&cu=INR&tn=Payment for ${productNames}`;
           window.location.href = upiLink;
-
-         
-          emailjs.send(
-            'service_uxox1dk', 
-            'template_ohb7uve', 
-            {
-              product_name: product.title,
-              name: formData.name,
-              email: formData.email,
-              payment_status: 'Paid via UPI',
-            },
-            'aDNtWgyBA_304wJQ_' 
-          );
         }
+
+        navigate('/thank-you');
       })
       .catch((error) => {
         console.log('FAILED...', error);
@@ -196,18 +205,24 @@ const BuyNowPage = () => {
     setPaymentMethod(option);
   };
 
-  if (!product) {
-    return <div>No product selected.</div>;
+  if (!Array.isArray(products) || products.length === 0) {
+    return <div>No products selected.</div>;
   }
 
   return (
     <BuyNowPageContainer>
-      <h1>Buy Your Product Now</h1>
+      <h1>Buy Your Products Now</h1>
       <ProductSummary>
-        <img src={product.image} alt={product.title} />
-        <h2>{product.title}</h2>
-        <p>Fresh and organic produce straight from the farm.</p>
-        <span>{product.price}</span>
+        <h2>Order Summary</h2>
+        {products.map((product) => (
+          <div key={product.id}>
+            <img src={product.image} alt={product.title} />
+            <h3>{product.title}</h3>
+            <p>Price: {product.price}</p>
+          </div>
+        ))}
+        <h3>Total: <span>{totalPrice}</span></h3>
+        
         <Form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -265,7 +280,7 @@ const BuyNowPage = () => {
           <div>
             <h3>Scan to Pay via UPI</h3>
             <QRCodeCanvas
-              value={`upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${product.price}&cu=INR&tn=Payment%20for%20${product.title}`}
+              value={`upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${totalPrice}&cu=INR&tn=Payment for ${productNames}`}
               size={256}
             />
           </div>

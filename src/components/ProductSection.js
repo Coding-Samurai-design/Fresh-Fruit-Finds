@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import styled from 'styled-components';
 import productImage1 from '../assets/360_F_468108626_wpL1hcDkE4g12mPPnbVxx8rCnWpHYKmV.jpg';
 import productImage2 from '../assets/aa17525d6461817943c4d58c8e93da670425748a.jpg';
@@ -98,6 +99,7 @@ const BuyButton = styled.button`
   cursor: pointer;
   font-size: 1.1rem;
   transition: all 0.3s ease;
+  margin-right: 10px;
 
   &:hover {
     background-color: #5da23a;
@@ -112,6 +114,15 @@ const BuyButton = styled.button`
   @media (max-width: 480px) {
     padding: 8px 16px;
     font-size: 0.9rem;
+  }
+`;
+
+
+const AddToCartButton = styled(BuyButton)`
+  background-color: #3ba73b;
+
+  &:hover {
+    background-color: #2d8a2d;
   }
 `;
 
@@ -131,10 +142,11 @@ const products = [
 ];
 
 const ProductSection = () => {
+  const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  const handleBuyNow = (product) => {
-    navigate('/buy-now', { state: { product } });
+  const handleBuyNow = (selectedProduct) => {
+    navigate('/buy-now', { state: { products: [selectedProduct] } });
   };
 
   return (
@@ -146,6 +158,7 @@ const ProductSection = () => {
             <h3>{product.title}</h3>
             <span>{product.price}</span>
             <BuyButton onClick={() => handleBuyNow(product)}>Buy Now</BuyButton>
+            <AddToCartButton onClick={() => addToCart(product)}>Add to Cart</AddToCartButton>
           </ProductCard>
         ))}
       </ProductGrid>
