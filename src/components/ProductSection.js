@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import styled from 'styled-components';
@@ -15,41 +15,73 @@ import productImage10 from '../assets/pexels-julia-nagy-568948-1327838.jpg';
 import productImage11 from '../assets/cucumber-seeds-malaysia-t103m_900x.webp';
 import productImage12 from '../assets/104607360.webp';
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+`;
+
+const ModalContent = styled.div`
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  opacity: ${props => (props.isVisible ? 1 : 0)};
+  transform: ${props => (props.isVisible ? 'scale(1)' : 'scale(0.8)')};
+  transition: opacity 0.3s ease, transform 0.3s ease;
+`;
+
+const ModalMessage = styled.p`
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #333;
+`;
+
+const CloseButton = styled.button`
+  background-color: #7ed957;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #5da23a;
+  }
+`;
+
 const ProductSectionContainer = styled.div`
   padding: 100px 20px;
   background-color: #07250c;
   color: #fff;
   text-align: center;
-  transition: padding 0.3s ease;
-
-  @media (max-width: 768px) {
-    padding: 60px 15px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 40px 10px;
-  }
 `;
 
 const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr); 
   gap: 30px;
-  transition: all 0.3s ease-in-out;
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(3, 1fr); 
-    gap: 20px;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr); 
-    gap: 15px;
   }
 
   @media (max-width: 480px) {
     grid-template-columns: repeat(1, 1fr); 
-    gap: 10px;
   }
 `;
 
@@ -58,27 +90,19 @@ const ProductCard = styled.div`
   padding: 20px;
   border-radius: 15px;
   text-align: center;
-  transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transform: translateY(0);
-
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-  }
 
   img {
     width: 100%;
     border-radius: 10px;
     margin-bottom: 15px;
     object-fit: cover;
-    max-height: 200px; 
+    max-height: 200px;
   }
 
   h3 {
     font-size: 1.7rem;
     margin-bottom: 10px;
-    transition: color 0.3s ease;
   }
 
   span {
@@ -98,25 +122,12 @@ const BuyButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1rem;
-  transition: all 0.3s ease;
   margin-right: 10px;
 
   &:hover {
     background-color: #5da23a;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  }
-
-  @media (max-width: 768px) {
-    padding: 10px 20px;
-    font-size: 1rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 8px 16px;
-    font-size: 0.9rem;
   }
 `;
-
 
 const AddToCartButton = styled(BuyButton)`
   background-color: #3ba73b;
@@ -145,8 +156,21 @@ const ProductSection = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
   const handleBuyNow = (selectedProduct) => {
     navigate('/buy-now', { state: { products: [selectedProduct] } });
+  };
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    setModalMessage(`${product.title} added to cart!`);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -158,10 +182,19 @@ const ProductSection = () => {
             <h3>{product.title}</h3>
             <span>{product.price}</span>
             <BuyButton onClick={() => handleBuyNow(product)}>Buy Now</BuyButton>
-            <AddToCartButton onClick={() => addToCart(product)}>Add to Cart</AddToCartButton>
+            <AddToCartButton onClick={() => handleAddToCart(product)}>Add to Cart</AddToCartButton>
           </ProductCard>
         ))}
       </ProductGrid>
+
+      {isModalOpen && (
+        <ModalOverlay>
+          <ModalContent isVisible={isModalOpen}>
+            <ModalMessage>{modalMessage}</ModalMessage>
+            <CloseButton onClick={closeModal}>OK</CloseButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </ProductSectionContainer>
   );
 };

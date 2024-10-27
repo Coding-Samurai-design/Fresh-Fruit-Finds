@@ -124,13 +124,15 @@ const PaymentOptionsContainer = styled.div`
   }
 `;
 
+const MAX_UPI_AMOUNT = 100000; // Maximum UPI payment amount (example)
+
 const BuyNowPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { products = [] } = location.state || {};
-  
+
   useEffect(() => {
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
   }, []);
 
   const [formData, setFormData] = useState({
@@ -140,7 +142,6 @@ const BuyNowPage = () => {
     phone: '',
     message: '',
   });
-
   const [paymentMethod, setPaymentMethod] = useState('');
   const [totalPrice, setTotalPrice] = useState(0);
   const [productNames, setProductNames] = useState('');
@@ -154,7 +155,6 @@ const BuyNowPage = () => {
     }, 0);
 
     setTotalPrice(calculatedTotal);
-
     const names = products.map((product) => product.title).join(', ');
     setProductNames(names);
   }, [products]);
@@ -163,8 +163,20 @@ const BuyNowPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const generateUPILink = (amount) => {
+    const finalAmount = amount > MAX_UPI_AMOUNT ? '' : amount; // Leave blank for manual entry if over limit
+    return `upi://pay?pa=7788078024@axl&pn=Your Name&mc=0000&am=${finalAmount}&cu=INR&mode=02&purpose=00`;
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (totalPrice > MAX_UPI_AMOUNT) {
+      alert(
+        `UPI payment is limited to amounts up to INR ${MAX_UPI_AMOUNT}. Please select Cash on Delivery or split the payment.`
+      );
+      return;
+    }
 
     emailjs
       .send(
@@ -177,22 +189,17 @@ const BuyNowPage = () => {
           address: formData.address,
           phone: formData.phone,
           message: formData.message,
-          payment_status:
-            paymentMethod === 'upi'
-              ? 'Paid via UPI'
-              : 'Pending - Cash on Delivery',
+          payment_status: paymentMethod === 'upi' ? 'Paid via UPI' : 'Pending - Cash on Delivery',
           total_price: totalPrice,
         },
         'aDNtWgyBA_304wJQ_'
       )
       .then((response) => {
         alert('Purchase confirmed! Check your email for details.');
-
         if (paymentMethod === 'upi') {
-          const upiLink = `upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${totalPrice}&cu=INR&tn=Payment for ${productNames}`;
+          const upiLink = generateUPILink(totalPrice);
           window.location.href = upiLink;
         }
-
         navigate('/thank-you');
       })
       .catch((error) => {
@@ -280,8 +287,9 @@ const BuyNowPage = () => {
           <div>
             <h3>Scan to Pay via UPI</h3>
             <QRCodeCanvas
-              value={`upi://pay?pa=7788078024@axl&pn=Sagar Panigrahi&am=${totalPrice}&cu=INR&tn=Payment for ${productNames}`}
-              size={256}
+              value={generateUPILink(totalPrice)}
+              size={300}
+              level="H"
             />
           </div>
         )}
