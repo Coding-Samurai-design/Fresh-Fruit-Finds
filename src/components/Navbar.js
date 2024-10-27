@@ -7,28 +7,37 @@ const Nav = styled.nav`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: transparent; /* Fully transparent background */
+  background-color: rgba(255, 255, 255, 0.2); 
+  backdrop-filter: blur(10px); 
   padding: 15px 30px;
-  position: fixed; /* Fixes navbar at the top */
+  position: fixed;
   width: 100%;
   top: 0;
   z-index: 100;
   transition: all 0.3s ease;
-
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   @media (max-width: 768px) {
-    padding: 10px 20px;
+    padding: 10px 15px;
+    justify-content: space-between;
   }
 `;
 
+
 const NavLinks = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 25px;
+  gap: 20px;
   flex-wrap: wrap;
 
   @media (max-width: 768px) {
-    gap: 15px;
+    gap: 10px;
+    width: 100%;
+    justify-content: center; 
+  }
+
+  @media (max-width: 480px) {
+    gap: 8px;
+    padding: 5px; 
   }
 `;
 
@@ -65,21 +74,36 @@ const NavLinkStyled = styled(NavLink)`
   @media (max-width: 768px) {
     font-size: 1rem;
   }
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const CartIcon = styled.span`
   font-size: 1.5rem;
   display: flex;
   align-items: center;
+  position: relative;
 
   span {
-    font-size: 1rem;
+    font-size: 0.8rem;
     margin-left: 5px;
     background: #5fa941;
     color: white;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 50%;
-    display: inline-block;
+    position: absolute;
+    top: -8px;
+    right: -10px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
   }
 `;
 

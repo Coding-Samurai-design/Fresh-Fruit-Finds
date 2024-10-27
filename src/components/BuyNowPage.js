@@ -124,7 +124,7 @@ const PaymentOptionsContainer = styled.div`
   }
 `;
 
-const MAX_UPI_AMOUNT = 100000; // Maximum UPI payment amount (example)
+const MAX_UPI_AMOUNT = 100000; 
 
 const BuyNowPage = () => {
   const location = useLocation();
@@ -164,7 +164,7 @@ const BuyNowPage = () => {
   };
 
   const generateUPILink = (amount) => {
-    const finalAmount = amount > MAX_UPI_AMOUNT ? '' : amount; // Leave blank for manual entry if over limit
+    const finalAmount = amount > MAX_UPI_AMOUNT ? '' : amount; 
     return `upi://pay?pa=7788078024@axl&pn=Your Name&mc=0000&am=${finalAmount}&cu=INR&mode=02&purpose=00`;
   };
   
