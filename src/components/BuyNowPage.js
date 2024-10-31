@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import emailjs from 'emailjs-com';
 import { QRCodeCanvas } from 'qrcode.react';
+import Modal from 'react-modal';
 import styled from 'styled-components';
 
 const BuyNowPageContainer = styled.div`
@@ -124,7 +125,52 @@ const PaymentOptionsContainer = styled.div`
   }
 `;
 
-const MAX_UPI_AMOUNT = 100000; 
+
+const ModalContent = styled.div`
+  background: #07250c;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+`;
+
+
+const ModalButton = styled.button`
+  background: linear-gradient(135deg, #7ed957, #5da23a);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+
+  &:hover {
+    background: linear-gradient(135deg, #5da23a, #7ed957);
+    transform: scale(1.05);
+  }
+`;
+
+const MAX_UPI_AMOUNT = 100000;
 
 const BuyNowPage = () => {
   const location = useLocation();
@@ -145,6 +191,8 @@ const BuyNowPage = () => {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [totalPrice, setTotalPrice] = useState(0);
   const [productNames, setProductNames] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
     const calculatedTotal = products.reduce((acc, product) => {
@@ -164,10 +212,10 @@ const BuyNowPage = () => {
   };
 
   const generateUPILink = (amount) => {
-    const finalAmount = amount > MAX_UPI_AMOUNT ? '' : amount; 
+    const finalAmount = amount > MAX_UPI_AMOUNT ? '' : amount;
     return `upi://pay?pa=7788078024@axl&pn=Your Name&mc=0000&am=${finalAmount}&cu=INR&mode=02&purpose=00`;
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -191,21 +239,23 @@ const BuyNowPage = () => {
           message: formData.message,
           payment_status: paymentMethod === 'upi' ? 'Paid via UPI' : 'Pending - Cash on Delivery',
           total_price: totalPrice,
+          to_email: formData.email
         },
         'aDNtWgyBA_304wJQ_'
       )
-      .then((response) => {
-        alert('Purchase confirmed! Check your email for details.');
-        if (paymentMethod === 'upi') {
-          const upiLink = generateUPILink(totalPrice);
-          window.location.href = upiLink;
-        }
-        navigate('/thank-you');
+      .then(() => {
+        setModalMessage('Purchase confirmed! Check your email for details.');
+        setIsModalOpen(true);
       })
       .catch((error) => {
         console.log('FAILED...', error);
-        alert('Failed to send email. Please try again.');
+        setModalMessage('Failed to send email. Please try again.');
+        setIsModalOpen(true);
       });
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    navigate('/ThankYouPage'); 
   };
 
   const handlePaymentOption = (option) => {
@@ -294,6 +344,31 @@ const BuyNowPage = () => {
           </div>
         )}
       </ProductSummary>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            transform: 'translate(-50%, -50%)',
+            padding: '0',
+            border: 'none',
+            borderRadius: '15px',
+          },
+        }}
+      >
+         <ModalContent>
+          <h2>{modalMessage}</h2>
+          <ModalButton onClick={closeModal}>OK</ModalButton>
+        </ModalContent>
+      </Modal>
     </BuyNowPageContainer>
   );
 };
